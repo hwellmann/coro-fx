@@ -18,9 +18,11 @@ package org.ops4j.coro.ui.node;
 import org.ops4j.coro.model.Measure;
 import org.ops4j.coro.model.Part;
 import org.ops4j.coro.model.Score;
+import org.ops4j.coro.model.Staff;
 import org.ops4j.coro.ui.appl.LayoutContext;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -36,6 +38,7 @@ public class ScoreNode extends Group {
 
     private Score score;
     private LayoutContext context;
+    private double staffWidth;
 
     /**
      * 
@@ -43,6 +46,7 @@ public class ScoreNode extends Group {
     public ScoreNode(Score score, LayoutContext context) {
         this.score = score;
         this.context = context;
+        this.staffWidth = 75 * context.getStaffSpace();
     }
 
     public void render() {
@@ -66,44 +70,64 @@ public class ScoreNode extends Group {
         double measureOffsetX = 0;
         Part part = this.score.getParts().get(0);
 
-        double staffWidth = 75 * SP;
-        
         double staffOffsetX = 5 * SP;
         double staffOffsetY = 12 * SP;
-        StaffNode staff = new StaffNode(null, context);
-        staff.render();
-        staff.getTransforms().add(new Translate(staffOffsetX, staffOffsetY));
-        getChildren().add(staff);
+        Staff staff = new Staff();
+        StaffNode staffNode = new StaffNode(staff, context);
+        staffNode.render();
+        staffNode.getTransforms().add(new Translate(staffOffsetX, staffOffsetY));
+        getChildren().add(staffNode);
 
         Measure firstMeasure = part.getMeasures().get(0);
-        
 
         for (Measure measure : part.getMeasures()) {
             MeasureNode measureNode = new MeasureNode(measure, context);
             measureNode.render();
-            
+
             double measureWidth = measureNode.getBoundsInLocal().getWidth();
             if (measureOffsetX + measureWidth <= staffWidth) {
-                
+
                 measureNode.getTransforms().add(new Translate(measureOffsetX, 0));
-                staff.getChildren().add(measureNode);
+                staffNode.getChildren().add(measureNode);
+                staff.getMeasures().add(measure);
                 measureOffsetX += measureNode.getBoundsInLocal().getWidth() + SP;
             }
             else {
-                staff = new StaffNode(null, context);
-                staff.render();
+                justifyStaff(staffNode, measureOffsetX);
+                staff = new Staff();
+                staffNode = new StaffNode(staff, context);
+                staffNode.render();
                 staffOffsetY += 10 * SP;
-                staff.getTransforms().add(new Translate(staffOffsetX, staffOffsetY));
-                getChildren().add(staff);
+                staffNode.getTransforms().add(new Translate(staffOffsetX, staffOffsetY));
+                getChildren().add(staffNode);
                 measureOffsetX = 0;
                 measure.setClef(firstMeasure.getClef());
                 measure.setKey(firstMeasure.getKey());
 
                 measureNode = new MeasureNode(measure, context);
                 measureNode.render();
-                staff.getChildren().add(measureNode);
-                measureOffsetX += measureNode.getBoundsInLocal().getWidth() + SP;                
-            }            
+                staffNode.getChildren().add(measureNode);
+                staff.getMeasures().add(measure);
+                measureOffsetX += measureNode.getBoundsInLocal().getWidth() + SP;
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    private void justifyStaff(StaffNode staffNode, double actualWidth) {
+        double extraSpace = staffWidth - actualWidth;
+        Staff staff = staffNode.getStaff();
+        double extraPerMeasure = extraSpace / (staff.getMeasures().size() - 1);
+        double offset = 0;
+        for (Node child : staffNode.getChildren()) {
+            if (child instanceof MeasureNode) {
+                if (offset > 0) {
+                    child.getTransforms().add(new Translate(offset, 0));
+                }
+                offset += extraPerMeasure;
+            }
         }
     }
 }
