@@ -191,10 +191,16 @@ public class NoteNode extends Group {
     private void createStemDown() {
         double sp = context.getStaffSpace();
         double stemThickness = context.getStemThickness();
-        Point2D anchorStemDown = context.getAnchorStemDown(symbol);
+        Point2D anchorStemDown = context.getAnchorStemDownNW(symbol);
+        
+        double dy = 0;
+        if (hasFlag()) {
+            MusicSymbol flag = getFlagDown(note);
+            dy = context.getAnchorStemDownSW(flag).getY();
+        }
         double x0 = stemThickness / 2;
         Line stemDown = new Line(x0, y - sp * anchorStemDown.getY(), 
-            x0, y + sp * (3.5 + anchorStemDown.getY()));
+            x0, y + sp * (3.5 + anchorStemDown.getY() + dy));
         stemDown.setStrokeWidth(stemThickness);
         getChildren().add(stemDown);
     }
@@ -212,7 +218,7 @@ public class NoteNode extends Group {
     private void createStemUp() {
         double sp = context.getStaffSpace();
         double stemThickness = context.getStemThickness();
-        Point2D anchorStemUp = context.getAnchorStemUp(symbol);
+        Point2D anchorStemUp = context.getAnchorStemUpSE(symbol);
 
         stemOffsetX = sp * anchorStemUp.getX() - stemThickness / 2;
         Line stemUp = new Line(stemOffsetX, y - sp * anchorStemUp.getY(), stemOffsetX,
@@ -282,8 +288,12 @@ public class NoteNode extends Group {
         for (Node child : getChildren()) {
             if (child instanceof Shape) {
                 Shape shape = (Shape) child;
-                shape.setFill(Color.BLUE);
-                shape.setStroke(Color.BLUE);
+                if (child instanceof Text) {
+                    shape.setFill(Color.BLUE);
+                }
+                else {
+                    shape.setStroke(Color.BLUE);                    
+                }
             }
         }
     }

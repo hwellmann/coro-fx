@@ -73,23 +73,31 @@ public class LayoutContext {
         return font;
     }
 
-//    /**
-//     * @param symbol
-//     * @return
-//     */
-//    public double getNominalWidth(MusicSymbol symbol) {
-//        return staffSpace * metadata.getBoundingBox(symbol);
-//    }
-    
     public BoundingBox getBoundingBox(MusicSymbol symbol) {
         return metadata.getBoundingBox(symbol);
     }
     
-    public Point2D getAnchorStemDown(MusicSymbol symbol) {
-        return metadata.getAnchor(symbol, "stemDownNW");
+    public Point2D getAnchorStemDownNW(MusicSymbol symbol) {
+        Point2D anchor = metadata.getAnchor(symbol, "stemDownNW");
+        if (anchor == null) {
+            anchor = Point2D.ZERO;
+        }
+        return anchor;
     }
 
-    public Point2D getAnchorStemUp(MusicSymbol symbol) {
-        return metadata.getAnchor(symbol, "stemUpSE");
+    public Point2D getAnchorStemDownSW(MusicSymbol symbol) {
+        Point2D anchor = metadata.getAnchor(symbol, "stemDownSW");
+        if (anchor == null) {
+            anchor = Point2D.ZERO;
+        }
+        return anchor;
+    }
+
+    public Point2D getAnchorStemUpSE(MusicSymbol symbol) {
+        Point2D anchor = metadata.getAnchor(symbol, "stemUpSE");
+        if (anchor == null) {
+            anchor = Point2D.ZERO;
+        }
+        return anchor;
     }
 }
