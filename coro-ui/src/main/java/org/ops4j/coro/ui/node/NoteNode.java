@@ -15,6 +15,16 @@
  */
 package org.ops4j.coro.ui.node;
 
+import static org.ops4j.coro.smufl.MusicSymbol.AUGMENTATION_DOT;
+import static org.ops4j.coro.smufl.MusicSymbol.FLAG_16TH_DOWN;
+import static org.ops4j.coro.smufl.MusicSymbol.FLAG_16TH_UP;
+import static org.ops4j.coro.smufl.MusicSymbol.FLAG_32ND_DOWN;
+import static org.ops4j.coro.smufl.MusicSymbol.FLAG_32ND_UP;
+import static org.ops4j.coro.smufl.MusicSymbol.FLAG_64TH_DOWN;
+import static org.ops4j.coro.smufl.MusicSymbol.FLAG_64TH_UP;
+import static org.ops4j.coro.smufl.MusicSymbol.FLAG_8TH_DOWN;
+import static org.ops4j.coro.smufl.MusicSymbol.FLAG_8TH_UP;
+import static org.ops4j.coro.smufl.MusicSymbol.NOTEHEAD_BLACK;
 import static org.ops4j.coro.smufl.MusicSymbol.NOTEHEAD_HALF;
 import static org.ops4j.coro.smufl.MusicSymbol.NOTEHEAD_WHOLE;
 
@@ -70,7 +80,21 @@ public class NoteNode extends Group {
         createLedgerLines();
         createStem();
         createFlag();
+        createDots();
+    }
 
+    /**
+     * 
+     */
+    private void createDots() {
+        double sp = context.getStaffSpace();
+        double x = 1.5 * sp;
+        for (int i = 0; i < note.getDots(); i++) {
+            Text dot = new Text(x, y, AUGMENTATION_DOT.asString());
+            dot.setFont(context.getMusicFont());
+            getChildren().add(dot);
+            x += 0.5 * sp;
+        }
     }
 
     /**
@@ -169,8 +193,8 @@ public class NoteNode extends Group {
         double stemThickness = context.getStemThickness();
         Point2D anchorStemDown = context.getAnchorStemDown(symbol);
         double x0 = stemThickness / 2;
-        Line stemDown = new Line(x0, y - sp * anchorStemDown.getY(), x0, y + sp
-            * (3.5 + anchorStemDown.getY()));
+        Line stemDown = new Line(x0, y - sp * anchorStemDown.getY(), 
+            x0, y + sp * (3.5 + anchorStemDown.getY()));
         stemDown.setStrokeWidth(stemThickness);
         getChildren().add(stemDown);
     }
@@ -216,20 +240,20 @@ public class NoteNode extends Group {
             case HALF:
                 return NOTEHEAD_HALF;
             default:
-                return MusicSymbol.NOTEHEAD_BLACK;
+                return NOTEHEAD_BLACK;
         }
     }
 
     private MusicSymbol getFlagDown(Note note) {
         switch (note.getNoteType()) {
             case EIGHTH:
-                return MusicSymbol.FLAG_8TH_DOWN;
+                return FLAG_8TH_DOWN;
             case N16TH:
-                return MusicSymbol.FLAG_16TH_DOWN;
+                return FLAG_16TH_DOWN;
             case N32ND:
-                return MusicSymbol.FLAG_32ND_DOWN;
+                return FLAG_32ND_DOWN;
             case N64TH:
-                return MusicSymbol.FLAG_64TH_DOWN;
+                return FLAG_64TH_DOWN;
             default:
                 return null;
         }
@@ -238,13 +262,13 @@ public class NoteNode extends Group {
     private MusicSymbol getFlagUp(Note note) {
         switch (note.getNoteType()) {
             case EIGHTH:
-                return MusicSymbol.FLAG_8TH_UP;
+                return FLAG_8TH_UP;
             case N16TH:
-                return MusicSymbol.FLAG_16TH_UP;
+                return FLAG_16TH_UP;
             case N32ND:
-                return MusicSymbol.FLAG_32ND_UP;
+                return FLAG_32ND_UP;
             case N64TH:
-                return MusicSymbol.FLAG_64TH_UP;
+                return FLAG_64TH_UP;
             default:
                 return null;
         }
@@ -263,15 +287,4 @@ public class NoteNode extends Group {
             }
         }
     }
-
-    private void unhighlight(Group noteGroup) {
-        for (Node child : noteGroup.getChildren()) {
-            if (child instanceof Shape) {
-                Shape shape = (Shape) child;
-                shape.setFill(Color.BLACK);
-                shape.setFill(Color.BLACK);
-            }
-        }
-    }
-
 }

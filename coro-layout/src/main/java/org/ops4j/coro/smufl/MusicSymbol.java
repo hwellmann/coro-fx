@@ -33,6 +33,8 @@ public enum MusicSymbol {
     FLAG_32ND_DOWN("flag32ndDown", '\ue245'),
     FLAG_64TH_UP("flag64thUp", '\ue246'),
     FLAG_64TH_DOWN("flag64thDown", '\ue246'),
+    
+    AUGMENTATION_DOT("augmentationDot", '\ue1e7')
     ;
 
     private String name;
