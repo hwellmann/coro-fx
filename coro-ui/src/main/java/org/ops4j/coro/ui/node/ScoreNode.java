@@ -90,7 +90,7 @@ public class ScoreNode extends Group {
                 measureNode.getTransforms().add(new Translate(measureOffsetX, 0));
                 staffNode.getChildren().add(measureNode);
                 staff.getMeasures().add(measure);
-                measureOffsetX += measureNode.getBoundsInLocal().getWidth() + SP;
+                measureOffsetX += measureNode.getLayoutBounds().getWidth() + SP;
             }
             else {
                 justifyStaff(staffNode, measureOffsetX);
@@ -108,7 +108,7 @@ public class ScoreNode extends Group {
                 measureNode.render();
                 staffNode.getChildren().add(measureNode);
                 staff.getMeasures().add(measure);
-                measureOffsetX += measureNode.getBoundsInLocal().getWidth() + SP;
+                measureOffsetX += measureNode.getLayoutBounds().getWidth() + SP;
             }
         }
     }
@@ -125,6 +125,7 @@ public class ScoreNode extends Group {
             if (child instanceof MeasureNode) {
                 if (offset > 0) {
                     child.getTransforms().add(new Translate(offset, 0));
+                    System.out.println(child.getBoundsInParent());
                 }
                 offset += extraPerMeasure;
             }

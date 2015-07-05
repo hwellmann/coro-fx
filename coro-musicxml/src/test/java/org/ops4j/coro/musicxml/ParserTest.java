@@ -22,11 +22,8 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 import org.ops4j.coro.musicxml.gen.Note;
@@ -44,10 +41,9 @@ public class ParserTest {
     
     @Test
     public void shouldParseSarabande() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(ScorePartwise.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        StreamSource source = new StreamSource(new File("src/test/resources/test-data/16 - Menuet 18.xml"));
-        ScorePartwise score = unmarshaller.unmarshal(source, ScorePartwise.class).getValue();
+        File file = new File("src/test/resources/test-data/16 - Menuet 18.xml");
+        MusicXmlReader reader = new MusicXmlReader();
+        ScorePartwise score = reader.readScore(file);
         assertThat(score.getPart().size(), is(1));
         
         Part part = score.getPart().get(0);
