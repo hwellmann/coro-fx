@@ -61,6 +61,10 @@ public class LayoutContext {
         return staffSpace * metadata.getEngravingDefault("thinBarlineThickness");
     }
     
+    public double getStaffLineThickness() {
+        return staffSpace * metadata.getEngravingDefault("staffLineThickness");
+    }
+    
     public double getStemThickness() {
         return staffSpace * metadata.getEngravingDefault("stemThickness");
     }

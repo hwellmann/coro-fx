@@ -17,10 +17,15 @@
  */
 package org.ops4j.coro.ui.node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ops4j.coro.model.Staff;
 import org.ops4j.coro.ui.appl.LayoutContext;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.shape.Line;
 
 /**
  * @author hwellmann
@@ -41,7 +46,19 @@ public class StaffNode extends Group {
     }
     
     public void render() {
-        
+        double SP = context.getStaffSpace();
+        double staffLineThickness = context.getStaffLineThickness();
+
+        int numLines = 5;
+        List<Node> lines = new ArrayList<>(5);
+        double y = 0;
+        for (int i = 0; i < numLines; i++) {
+            Line line = new Line(0, y, 75 * SP, y);
+            line.setStrokeWidth(staffLineThickness);
+            lines.add(line);
+            y += SP;
+        }
+        getChildren().addAll(lines);
     }
 
 }
