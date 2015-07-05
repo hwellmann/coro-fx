@@ -1,19 +1,17 @@
 /*
  * Copyright 2015 Harald Wellmann.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied.
  *
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * See the License for the specific language governing permissions and limitations under the
+ * License.
  */
 package org.ops4j.coro.ui.node;
 
@@ -21,6 +19,7 @@ import static org.ops4j.coro.smufl.MusicSymbol.NOTEHEAD_HALF;
 import static org.ops4j.coro.smufl.MusicSymbol.NOTEHEAD_WHOLE;
 
 import org.ops4j.coro.model.Note;
+import org.ops4j.coro.model.NoteType;
 import org.ops4j.coro.model.Pitch;
 import org.ops4j.coro.model.Step;
 import org.ops4j.coro.smufl.MusicSymbol;
@@ -41,13 +40,13 @@ import javafx.scene.text.Text;
  *
  */
 public class NoteNode extends Group {
-    
-    
+
     private Note note;
     private LayoutContext context;
     private int numSteps;
     private MusicSymbol symbol;
     private double y;
+    private double stemOffsetX;
 
     /**
      * 
@@ -57,7 +56,7 @@ public class NoteNode extends Group {
         this.context = context;
         setOnMouseClicked(e -> handleNoteSelected(e));
     }
-    
+
     public void render() {
         double sp = context.getStaffSpace();
         numSteps = getNumSteps(note);
@@ -70,9 +69,58 @@ public class NoteNode extends Group {
 
         createLedgerLines();
         createStem();
-        
+        createFlag();
+
     }
-    
+
+    /**
+     * 
+     */
+    private void createFlag() {
+        if (!hasFlag()) {
+            return;
+        }
+
+        if (hasStemDown()) {
+            createFlagDown();
+        }
+        else {
+            createFlagUp();
+        }
+
+    }
+
+    /**
+     * 
+     */
+    private void createFlagDown() {
+        double sp = context.getStaffSpace();
+        MusicSymbol symbol = getFlagDown(note);
+        String text = symbol.asString();
+        Text flag = new Text(0, y + 3.5 * sp, text);
+        flag.setFont(context.getMusicFont());
+        getChildren().add(flag);
+    }
+
+    /**
+     * 
+     */
+    private void createFlagUp() {
+        double sp = context.getStaffSpace();
+        MusicSymbol symbol = getFlagUp(note);
+        String text = symbol.asString();
+        Text flag = new Text(stemOffsetX, y - 3.5 * sp, text);
+        flag.setFont(context.getMusicFont());
+        getChildren().add(flag);
+    }
+
+    /**
+     * @return
+     */
+    private boolean hasFlag() {
+        return note.getNoteType().ordinal() >= NoteType.EIGHTH.ordinal();
+    }
+
     private void createLedgerLines() {
         double sp = context.getStaffSpace();
         BoundingBox box = context.getBoundingBox(symbol);
@@ -98,7 +146,7 @@ public class NoteNode extends Group {
                 dy += sp;
                 getChildren().add(ledgerLine);
             }
-        }        
+        }
     }
 
     /**
@@ -113,9 +161,6 @@ public class NoteNode extends Group {
         }
     }
 
-    
-    
-    
     /**
      * 
      */
@@ -124,7 +169,7 @@ public class NoteNode extends Group {
         double stemThickness = context.getStemThickness();
         Point2D anchorStemDown = context.getAnchorStemDown(symbol);
         double x0 = stemThickness / 2;
-        Line stemDown = new Line(x0, y -sp * anchorStemDown.getY(), x0, y + sp
+        Line stemDown = new Line(x0, y - sp * anchorStemDown.getY(), x0, y + sp
             * (3.5 + anchorStemDown.getY()));
         stemDown.setStrokeWidth(stemThickness);
         getChildren().add(stemDown);
@@ -144,12 +189,11 @@ public class NoteNode extends Group {
         double sp = context.getStaffSpace();
         double stemThickness = context.getStemThickness();
         Point2D anchorStemUp = context.getAnchorStemUp(symbol);
-        
-        double x1 = sp * anchorStemUp.getX() - stemThickness / 2;
-        Line stemUp = new Line(x1, y - sp * anchorStemUp.getY(), x1,
+
+        stemOffsetX = sp * anchorStemUp.getX() - stemThickness / 2;
+        Line stemUp = new Line(stemOffsetX, y - sp * anchorStemUp.getY(), stemOffsetX,
             y - sp * (3.5 - anchorStemUp.getY()));
-        
-        
+
         stemUp.setStrokeWidth(stemThickness);
         getChildren().add(stemUp);
     }
@@ -173,6 +217,36 @@ public class NoteNode extends Group {
                 return NOTEHEAD_HALF;
             default:
                 return MusicSymbol.NOTEHEAD_BLACK;
+        }
+    }
+
+    private MusicSymbol getFlagDown(Note note) {
+        switch (note.getNoteType()) {
+            case EIGHTH:
+                return MusicSymbol.FLAG_8TH_DOWN;
+            case N16TH:
+                return MusicSymbol.FLAG_16TH_DOWN;
+            case N32ND:
+                return MusicSymbol.FLAG_32ND_DOWN;
+            case N64TH:
+                return MusicSymbol.FLAG_64TH_DOWN;
+            default:
+                return null;
+        }
+    }
+
+    private MusicSymbol getFlagUp(Note note) {
+        switch (note.getNoteType()) {
+            case EIGHTH:
+                return MusicSymbol.FLAG_8TH_UP;
+            case N16TH:
+                return MusicSymbol.FLAG_16TH_UP;
+            case N32ND:
+                return MusicSymbol.FLAG_32ND_UP;
+            case N64TH:
+                return MusicSymbol.FLAG_64TH_UP;
+            default:
+                return null;
         }
     }
 

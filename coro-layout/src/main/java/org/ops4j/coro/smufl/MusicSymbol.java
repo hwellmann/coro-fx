@@ -24,6 +24,15 @@ public enum MusicSymbol {
     TIME_SIG_7("timeSig7", '\uE087'), 
     TIME_SIG_8("timeSig8", '\uE088'), 
     TIME_SIG_9("timeSig9", '\uE089'),
+    
+    FLAG_8TH_UP("flag8thUp", '\ue240'),
+    FLAG_8TH_DOWN("flag8thDown", '\ue241'),
+    FLAG_16TH_UP("flag16thUp", '\ue242'),
+    FLAG_16TH_DOWN("flag16thDown", '\ue243'),
+    FLAG_32ND_UP("flag32ndUp", '\ue244'),
+    FLAG_32ND_DOWN("flag32ndDown", '\ue245'),
+    FLAG_64TH_UP("flag64thUp", '\ue246'),
+    FLAG_64TH_DOWN("flag64thDown", '\ue246'),
     ;
 
     private String name;
