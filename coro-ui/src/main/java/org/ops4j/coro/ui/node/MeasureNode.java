@@ -26,6 +26,8 @@ import org.ops4j.coro.smufl.MusicSymbol;
 import org.ops4j.coro.ui.appl.LayoutContext;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Translate;
@@ -38,6 +40,7 @@ public class MeasureNode extends Group {
 
     private Measure measure;
     private LayoutContext layoutContext;
+    private Line barLine;
 
     public MeasureNode(Measure measure, LayoutContext context) {
         this.measure = measure;
@@ -47,43 +50,63 @@ public class MeasureNode extends Group {
     public void render() {
         double sp = layoutContext.getStaffSpace();
         double x = 0.5 * sp;
+        
+        Line line = new Line(0.5, 0, 0.5, 4 * sp);
+        line.setStroke(Color.TRANSPARENT);
+        line.setStrokeWidth(1);
+        getChildren().add(line);
+        
         if (measure.getClef() != null) {
             Group clef = renderClef(measure.getClef());
             clef.getTransforms().add(new Translate(x, 0));
             getChildren().add(clef);
-            x += clef.getBoundsInLocal().getWidth() + 0.5 * sp;
+            x = getBoundsInLocal().getWidth() + 0.5 * sp;
         }
+
         if (measure.getKey() != null) {
             Group key = renderKey(measure.getKey());
             key.getTransforms().add(new Translate(x, 0));
             getChildren().add(key);
-            x += key.getBoundsInLocal().getWidth() + 0.5 * sp;
+            x = getBoundsInLocal().getWidth() + 0.5 * sp;
         }
 
         if (measure.getTime() != null) {
             Group key = renderTime(measure.getTime());
             key.getTransforms().add(new Translate(x, 0));
             getChildren().add(key);
-            x += key.getBoundsInLocal().getWidth() + 0.5 * sp;
+            x = getBoundsInLocal().getWidth() + 1 * sp;
         }
 
-        x += sp;
+        x = getBoundsInLocal().getWidth() + 1.5 * sp;
 
-        int noteIndex = 0;
         for (Note note : measure.getNotes()) {
             NoteNode noteGroup = new NoteNode(note, layoutContext);
             noteGroup.render();
             
             noteGroup.getTransforms().add(new Translate(x, 0));
             getChildren().add(noteGroup);
-            noteIndex++;
-            x += noteGroup.getBoundsInLocal().getWidth() + sp;
+            x = getBoundsInLocal().getWidth() + sp;
         }
 
-        Line barLine = new Line(0, 0, 0, 4 * sp);
-        barLine.getTransforms().add(new Translate(x + sp, 0));
-        barLine.setStrokeWidth(layoutContext.getBarLineThickness());
+        double barLineThickness = layoutContext.getBarLineThickness();
+        barLine = new Line(0, 0, 0, 4 * sp);
+        barLine.getTransforms().add(new Translate(x, 0));
+        barLine.setStrokeWidth(barLineThickness);
         getChildren().add(barLine);
+    }
+    
+    public void addPadding(double paddingPerNote) {
+        double offsetX = 0;
+        for (Node child : getChildren()) {
+            if (child instanceof NoteNode) {
+                NoteNode noteNode = (NoteNode) child;
+                if (offsetX != 0) {
+                    noteNode.getTransforms().add(new Translate(offsetX, 0));
+                }
+                offsetX += paddingPerNote;
+            }
+        }
+        barLine.getTransforms().add(new Translate(offsetX, 0));
     }
     
     /**
