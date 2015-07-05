@@ -77,11 +77,11 @@ public class MeasureNode extends Group {
             noteGroup.getTransforms().add(new Translate(x, 0));
             getChildren().add(noteGroup);
             noteIndex++;
-            x += 3 * sp;
+            x += noteGroup.getBoundsInLocal().getWidth() + sp;
         }
 
         Line barLine = new Line(0, 0, 0, 4 * sp);
-        barLine.getTransforms().add(new Translate(x - sp, 0));
+        barLine.getTransforms().add(new Translate(x + sp, 0));
         barLine.setStrokeWidth(layoutContext.getBarLineThickness());
         getChildren().add(barLine);
     }
