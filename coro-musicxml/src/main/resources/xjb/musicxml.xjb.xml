@@ -1,0 +1,24 @@
+<bindings xmlns="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  version="2.1">
+
+  <bindings schemaLocation="../xsd/musicxml.xsd">
+    
+    <globalBindings>
+      <javaType xmlType="xs:decimal" name="java.lang.Float"/>
+    </globalBindings>
+
+    <bindings node="/xs:schema/xs:complexType[@name='credit']/xs:sequence/xs:element[@name='link']">
+      <property name="creditLink" />
+    </bindings>
+
+
+    <bindings node="/xs:schema/xs:complexType[@name='barline']/xs:attribute[@name='segno']">
+      <property name="segnoAttribute" />
+    </bindings>
+
+    <bindings node="/xs:schema/xs:complexType[@name='barline']/xs:attribute[@name='coda']">
+      <property name="codaAttribute" />
+    </bindings>
+
+  </bindings>
+</bindings>
