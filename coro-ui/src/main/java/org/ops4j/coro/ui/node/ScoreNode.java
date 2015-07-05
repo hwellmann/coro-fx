@@ -63,42 +63,47 @@ public class ScoreNode extends Group {
 
     private void renderPart() {
         double SP = context.getStaffSpace();
-        double x = 0;
-        int numMeasures = -1;
+        double measureOffsetX = 0;
         Part part = this.score.getParts().get(0);
 
+        double staffWidth = 75 * SP;
+        
         double staffOffsetX = 5 * SP;
         double staffOffsetY = 12 * SP;
         StaffNode staff = new StaffNode(null, context);
         staff.render();
         staff.getTransforms().add(new Translate(staffOffsetX, staffOffsetY));
         getChildren().add(staff);
-        int numStaves = 0;
 
         Measure firstMeasure = part.getMeasures().get(0);
         
 
         for (Measure measure : part.getMeasures()) {
-            numMeasures++;
-            if (numMeasures % 4 == 0) {
-                if (numStaves > 0) {
-                    staff = new StaffNode(null, context);
-                    staff.render();
-                    staffOffsetY += 10 * SP;
-                    staff.getTransforms().add(new Translate(staffOffsetX, staffOffsetY));
-                    getChildren().add(staff);
-                    x = 0;
-                    measure.setClef(firstMeasure.getClef());
-                    measure.setKey(firstMeasure.getKey());
-                }
-                numStaves++;
-            }
             MeasureNode measureNode = new MeasureNode(measure, context);
             measureNode.render();
-            measureNode.getTransforms().add(new Translate(x, 0));
-            staff.getChildren().add(measureNode);
-            x += measureNode.getBoundsInLocal().getWidth() + SP;
+            
+            double measureWidth = measureNode.getBoundsInLocal().getWidth();
+            if (measureOffsetX + measureWidth <= staffWidth) {
+                
+                measureNode.getTransforms().add(new Translate(measureOffsetX, 0));
+                staff.getChildren().add(measureNode);
+                measureOffsetX += measureNode.getBoundsInLocal().getWidth() + SP;
+            }
+            else {
+                staff = new StaffNode(null, context);
+                staff.render();
+                staffOffsetY += 10 * SP;
+                staff.getTransforms().add(new Translate(staffOffsetX, staffOffsetY));
+                getChildren().add(staff);
+                measureOffsetX = 0;
+                measure.setClef(firstMeasure.getClef());
+                measure.setKey(firstMeasure.getKey());
+
+                measureNode = new MeasureNode(measure, context);
+                measureNode.render();
+                staff.getChildren().add(measureNode);
+                measureOffsetX += measureNode.getBoundsInLocal().getWidth() + SP;                
+            }            
         }
     }
-
 }

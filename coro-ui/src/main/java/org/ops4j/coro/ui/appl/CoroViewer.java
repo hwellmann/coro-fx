@@ -104,7 +104,7 @@ public class CoroViewer extends Application {
         drawingPane = new DrawingPane(scoreNode);
         root.getChildren().addAll(createMenuBar(), drawingPane);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 1024, 768);
         scene.setFill(Color.GREY);
 
         primaryStage.setScene(scene);
