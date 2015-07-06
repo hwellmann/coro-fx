@@ -148,6 +148,9 @@ public class MusicXmlConverter {
             else if (child.getName().getLocalPart().equals("dot")) {
                 coroNote.setDots(coroNote.getDots() + 1);                
             }
+            else if (child.getName().getLocalPart().equals("rest")) {
+                coroNote.setRest(true);                
+            }
         }
         return coroNote;
     }

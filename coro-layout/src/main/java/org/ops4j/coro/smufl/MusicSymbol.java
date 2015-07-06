@@ -5,6 +5,17 @@ public enum MusicSymbol {
     NOTEHEAD_BLACK("noteheadBlack", '\uE0A4'), 
     NOTEHEAD_HALF("noteheadHalf", '\uE0A3'), 
     NOTEHEAD_WHOLE("noteheadWhole", '\uE0A2'),
+    
+    REST_MAXIMA("restMaxima", '\uE4E0'),
+    REST_LONGA("restLonga", '\uE4E1'),
+    REST_BREVE("restDoubleWhole", '\uE4E2'),
+    REST_WHOLE("restWhole", '\uE4E3'),
+    REST_HALF("restHalf", '\uE4E4'),
+    REST_QUARTER("restQuarter", '\uE4E5'),
+    REST_EIGHTH("rest8th", '\uE4E6'),
+    REST_16TH("rest16th", '\uE4E7'),
+    REST_32ND("rest32nd", '\uE4E8'),
+    REST_64TH("rest64th", '\uE4E9'),
 
     ACCIDENTAL_FLAT("accidentalFlat", '\uE260'), 
     ACCIDENTAL_NATURAL("accidentalNatural", '\uE261'), 

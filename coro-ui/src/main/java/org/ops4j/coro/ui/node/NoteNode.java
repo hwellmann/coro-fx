@@ -68,6 +68,16 @@ public class NoteNode extends Group {
     }
 
     public void render() {
+        if (note.isRest()) {
+            renderRest();
+        }
+        else {
+            renderNote();
+        }
+        createDots();
+    }
+
+    public void renderNote() {
         double sp = context.getStaffSpace();
         numSteps = getNumSteps(note);
         y = sp / 2 * numSteps;
@@ -81,6 +91,17 @@ public class NoteNode extends Group {
         createStem();
         createFlag();
         createDots();
+    }
+    
+    public void renderRest() {
+        double sp = context.getStaffSpace();
+        numSteps = 4;
+        y = sp / 2 * numSteps;
+        symbol = getRestSymbol(note);
+        String text = symbol.asString();
+        Text noteUi = new Text(0, y, text);
+        noteUi.setFont(context.getMusicFont());
+        getChildren().add(noteUi);
     }
 
     /**
@@ -111,7 +132,6 @@ public class NoteNode extends Group {
         else {
             createFlagUp();
         }
-
     }
 
     /**
@@ -247,6 +267,37 @@ public class NoteNode extends Group {
                 return NOTEHEAD_HALF;
             default:
                 return NOTEHEAD_BLACK;
+        }
+    }
+
+    private MusicSymbol getRestSymbol(Note note) {
+        NoteType noteType = note.getNoteType();
+        if (noteType == null) {
+            noteType = NoteType.WHOLE;
+        }
+        switch (noteType) {
+            case MAXIMA:
+                return MusicSymbol.REST_MAXIMA;
+            case LONG:
+                return MusicSymbol.REST_LONGA;
+            case BREVE:
+                return MusicSymbol.REST_BREVE;
+            case WHOLE:
+                return MusicSymbol.REST_WHOLE;
+            case HALF:
+                return MusicSymbol.REST_HALF;
+            case QUARTER:
+                return MusicSymbol.REST_QUARTER;
+            case EIGHTH:
+                return MusicSymbol.REST_EIGHTH;
+            case N16TH:
+                return MusicSymbol.REST_16TH;
+            case N32ND:
+                return MusicSymbol.REST_32ND;
+            case N64TH:
+                return MusicSymbol.REST_64TH;
+            default:
+                return null;
         }
     }
 
